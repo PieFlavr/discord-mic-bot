@@ -403,8 +403,9 @@ class Model:
     # The timestamp is supplied from outside so all silent frames get counted.
     def _send_audio_packet(self, voice_client: discord.VoiceClient, opus_packet: bytes, timestamp_frames: int) -> typing.Callable[[], None]:
         sock = voice_client.socket
-        endpoint_ip = voice_client.endpoint_ip
-        endpoint_port: int = voice_client.voice_port  # type: ignore
+        # Old (presumably depreceated) endpoint stuff w/ voice client, has been replaced with endpoint and not needed with the fix
+        # endpoint_ip = voice_client.endpoint_ip
+        # endpoint_port: int = voice_client.voice_port  # type: ignore
         sequence = voice_client.sequence
 
         voice_client.timestamp = timestamp_frames
@@ -415,7 +416,16 @@ class Model:
             if sock is None:
                 return
             try:
-                sock.sendto(udp_packet, (endpoint_ip, endpoint_port))
+                # Replaces the original depreceated "sock.sendto()" with a protected packet send
+                # admittedly is very sketchy but it works!
+                if hasattr(voice_client, '_connection') and hasattr(voice_client._connection, 'send_packet'):
+                    voice_client._connection.send_packet(udp_packet)
+                    self.logger.info(f"Packet sent successfully. (seq={voice_client.sequence}, ts={timestamp_frames})")
+                else:
+                    raise AttributeError("send_packet method not found in _connection")
+                
+                # Old packet send, replaced by above... here for reference!
+                # sock.sendto(udp_packet, (endpoint_ip, endpoint_port))
             except BlockingIOError:
                 self.logger.warning('Network too slow, a packet is dropped. (seq={}, ts={})'.format(sequence, timestamp_frames))
 
