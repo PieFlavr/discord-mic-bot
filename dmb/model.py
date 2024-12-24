@@ -420,7 +420,7 @@ class Model:
                 # admittedly is very sketchy but it works!
                 if hasattr(voice_client, '_connection') and hasattr(voice_client._connection, 'send_packet'):
                     voice_client._connection.send_packet(udp_packet)
-                    self.logger.info(f"Packet sent successfully. (seq={voice_client.sequence}, ts={timestamp_frames})")
+                    # self.logger.info(f"Packet sent successfully. (seq={voice_client.sequence}, ts={timestamp_frames})")
                 else:
                     raise AttributeError("send_packet method not found in _connection")
                 
