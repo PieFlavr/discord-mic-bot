@@ -1,3 +1,7 @@
+# Have to run on clones to prevent token upload :p 
+# Not sure if there's an easier fix but atleast its a one time thing
+# git update-index --skip-worktree token.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
