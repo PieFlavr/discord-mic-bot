@@ -134,3 +134,6 @@ dmypy.json
 
 # bot token
 token.txt
+
+# debugger settings
+.vscode/launch.json
